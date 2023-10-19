@@ -1,0 +1,127 @@
+---
+
+- hosts: localhost
+
+  tasks:
+
+  - name: Create a resource group
+
+    azure.azcollection.azure_rm_resourcegroup:
+
+      name: trainee19
+
+      location: East US
+
+    register: rg
+
+
+  - name: Create virtual network
+
+    azure_rm_virtualnetwork:
+
+      name: trainee19vnet
+
+      resource_group: trainee19
+
+      address_prefixes_cidr: 10.0.0.0/16
+
+    register: vnet
+
+
+  - name: Create subnet
+
+    azure_rm_subnet:
+
+      name: trainee19subnet
+
+      resource_group: trainee19
+
+      virtual_network_name: trainee19vnet
+
+      address_prefixes: "10.0.0.0/24"
+
+
+  - name: Create Public IP address
+
+    azure_rm_publicipaddress:
+
+      name: trainee19publicip
+
+      resource_group: trainee19
+
+      allocation_method: Dynamic
+
+
+  - name: Create network unterface
+
+    azure_rm_networkinterface:
+
+      name: trainee19nic
+
+      resource_group: trainee19
+
+      location: East US
+
+      virtual_network_name: trainee19vnet
+
+      subnet_name: trainee19subnet
+
+      public_ip_name: trainee19publicip
+
+
+  - name: Create a network security group
+
+    azure_rm_securitygroup:
+
+      name: trainee19nsg
+
+      resource_group: trainee19
+
+      rules:
+
+        - name: SSH
+
+          access: Allow
+
+          direction: Inbound
+
+          priority: 100
+
+          protocol: Tcp
+
+          source_port_range: "*"
+
+          source_address_prefix: "*"
+
+          destination_port_range: 22
+
+          destination_address_prefix: "*"
+
+
+  - name: Create virtual machine
+
+    azure_rm_virtualmachine:
+
+      name: trainee19vm
+
+      resource_group: trainee19
+
+      location: East US
+
+      vm_size: Standard_D2s_v3
+
+      admin_username: trainee19
+
+      admin_password: TrainerP@ssw0rd
+
+      image:
+
+        offer: UbuntuServer
+
+        publisher: Canonical
+
+        sku: 18.04-LTS
+
+        version: 18.04.201804262
+
+      network_interfaces: trainee19nic

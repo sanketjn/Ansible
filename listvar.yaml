@@ -1,0 +1,22 @@
+---
+
+- hosts: linux
+
+  vars:
+
+    teams: 
+      - India
+      - Eng
+      - PAK
+
+  tasks:
+
+  - name: Print team names
+
+    debug:
+
+      msg: "{{ item }}"
+
+    with_items:
+
+    - "{{ teams }}"
