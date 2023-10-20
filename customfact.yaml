@@ -9,7 +9,7 @@
       state: directory
   - name: copy the fact script to node
     copy:
-      src: datetime.sh 
+      src: datetime.sh
       dest: /etc/ansible/facts.d/date_time.fact
       mode: 0755
   - name: reload the fact
@@ -18,4 +18,3 @@
   - name: print the custom fact
     debug:
       msg: " custom fact is {{ ansible_local.date_time }}"
-     
